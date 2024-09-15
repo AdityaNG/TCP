@@ -17,19 +17,6 @@ TCP is a simple unified framework to combine trajectory and control prediction f
 
 
 ## Setup
-Download and setup CARLA 0.9.10.1
-```
-mkdir carla
-cd carla
-wget https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/CARLA_0.9.10.1.tar.gz
-wget https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/AdditionalMaps_0.9.10.1.tar.gz
-tar -xf CARLA_0.9.10.1.tar.gz
-tar -xf AdditionalMaps_0.9.10.1.tar.gz
-rm CARLA_0.9.10.1.tar.gz
-rm AdditionalMaps_0.9.10.1.tar.gz
-cd ..
-```
-
 Clone this repo and build the environment
 
 ```
@@ -39,8 +26,21 @@ conda env create -f environment.yml --name TCP
 conda activate TCP
 ```
 
-```
+``` 
 export PYTHONPATH=$PYTHONPATH:PATH_TO_TCP
+```
+
+Download and setup CARLA 0.9.10.1
+```
+mkdir carla
+cd carla
+wget -c https://tiny.carla.org/carla-0-9-10-1-linux -O CARLA_0.9.10.1.tar.gz
+wget -c https://tiny.carla.org/additional-maps-0-9-10-1-linux -O AdditionalMaps_0.9.10.1.tar.gz
+tar -xvzf CARLA_0.9.10.1.tar.gz
+mv CARLA_0.9.10.1.tar.gz Import/
+./ImportAssets.sh
+cd ..
+pip install carla==0.9.12
 ```
 
 ## Dataset
@@ -51,14 +51,15 @@ Download our dataset through [Huggingface](https://huggingface.co/datasets/craig
 First, set the dataset path in ``TCP/config.py``.
 Training:
 ```
-python TCP/train.py --gpus NUM_OF_GPUS
+python -m TCP.train
+python -m TCP.train --resume_from_checkpoint ckpts/epoch_07.pth
 ```
 
 ## Data Generation
 First, launch the carla server,
 ```
 cd CARLA_ROOT
-./CarlaUE4.sh --world-port=2000 -opengl
+./CarlaUE4.sh --world-port=2000 -quality-level=Low
 ```
 Set the carla path, routes file, scenario file, and data path for data generation in ``leaderboard/scripts/data_collection.sh``.
 
@@ -73,7 +74,7 @@ After the data collecting process, run `tools/filter_data.py` and `tools/gen_dat
 First, launch the carla server,
 ```
 cd CARLA_ROOT
-./CarlaUE4.sh --world-port=2000 -opengl
+./CarlaUE4.sh --world-port=2000 -quality-level=Low
 ```
 Set the carla path, routes file, scenario file, model ckpt, and data path for evaluation in ``leaderboard/scripts/run_evaluation.sh``.
 
