@@ -1,5 +1,5 @@
 #!/bin/bash
-export CARLA_ROOT= PATH_TO_CARLA
+export CARLA_ROOT="./carla"
 export CARLA_SERVER=${CARLA_ROOT}/CarlaUE4.sh
 export PYTHONPATH=$PYTHONPATH:${CARLA_ROOT}/PythonAPI
 export PYTHONPATH=$PYTHONPATH:${CARLA_ROOT}/PythonAPI/carla
@@ -14,18 +14,20 @@ export PORT=2000
 export TM_PORT=8000
 export DEBUG_CHALLENGE=0
 export REPETITIONS=3 # multiple evaluation runs
-export RESUME=True
+export RESUME=False
+export VISUALIZE_IMAGE=1
 
 
 # TCP evaluation
 export ROUTES=leaderboard/data/evaluation_routes/routes_lav_valid.xml
 export TEAM_AGENT=team_code/tcp_agent.py
-export TEAM_CONFIG= PATH_TO_MODEL_CKPT
+export TEAM_CONFIG="log/TCP/best_epoch=05-val_loss=0.795.ckpt"
 export CHECKPOINT_ENDPOINT=results_TCP.json
 export SCENARIOS=leaderboard/data/scenarios/all_towns_traffic_scenarios.json
 export SAVE_PATH=data/results_TCP/
 
 
+# python3 -m leaderboard.leaderboard_evaluator \
 python3 ${LEADERBOARD_ROOT}/leaderboard/leaderboard_evaluator.py \
 --scenarios=${SCENARIOS}  \
 --routes=${ROUTES} \

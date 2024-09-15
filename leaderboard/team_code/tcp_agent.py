@@ -23,7 +23,7 @@ from team_code.planner import RoutePlanner
 
 
 SAVE_PATH = os.environ.get('SAVE_PATH', None)
-
+VISUALIZE_IMAGE = os.environ.get('VISUALIZE_IMAGE', None)
 
 def get_entry_point():
 	return 'TCPAgent'
@@ -251,6 +251,36 @@ class TCPAgent(autonomous_agent.AutonomousAgent):
 			self.status = 0
 
 		self.pid_metadata['status'] = self.status
+
+		if VISUALIZE_IMAGE:
+			# Visualize
+			rgb_image = tick_data['rgb']
+			bev_image = tick_data['bev']
+
+			# Convert BEV image to BGR color space
+			bev_image = (bev_image * 255).astype(np.uint8)
+			# bev_image = cv2.cvtColor(bev_image, cv2.COLOR_GRAY2BGR)
+			
+			# Resize BEV image to match RGB image height
+			bev_image = cv2.resize(bev_image, (bev_image.shape[1], rgb_image.shape[0]))
+			
+			# Horizontal stack of RGB and BEV images
+			rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+			vis_image = np.hstack((rgb_image, bev_image))
+			# vis_image = cv2.cvtColor(vis_image, cv2.COLOR_RGB2BGR)
+			
+			# Add text for speed, steering, and throttle
+			font = cv2.FONT_HERSHEY_SIMPLEX
+			cv2.putText(vis_image, f"Speed: {tick_data['speed']:.2f} km/h", (10, 30), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+			cv2.putText(vis_image, f"Steer: {control.steer:.2f}", (10, 70), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+			cv2.putText(vis_image, f"Throttle: {control.throttle:.2f}", (10, 110), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+			
+			# Display the visualization
+			cv2.imshow("RGB and BEV Visualization", vis_image)
+			key = cv2.waitKey(1)
+
+			if ord('q') == key:
+				exit(1)
 
 		if SAVE_PATH is not None and self.step % 10 == 0:
 			self.save(tick_data)
