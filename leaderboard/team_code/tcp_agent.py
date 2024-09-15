@@ -20,6 +20,7 @@ from leaderboard.autoagents import autonomous_agent
 from TCP.model import TCP
 from TCP.config import GlobalConfig
 from team_code.planner import RoutePlanner
+from team_code.trajectory_plot import plot_trajectories, estimate_intrinsics
 
 
 SAVE_PATH = os.environ.get('SAVE_PATH', None)
@@ -256,6 +257,8 @@ class TCPAgent(autonomous_agent.AutonomousAgent):
 			# Visualize
 			rgb_image = tick_data['rgb']
 			bev_image = tick_data['bev']
+			pred_wp = pred['pred_wp'][0].cpu().numpy()
+			pred_wp[:, 1] *= -1
 
 			# Convert BEV image to BGR color space
 			bev_image = (bev_image * 255).astype(np.uint8)
@@ -266,6 +269,33 @@ class TCPAgent(autonomous_agent.AutonomousAgent):
 			
 			# Horizontal stack of RGB and BEV images
 			rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
+
+			front_cam = self.sensors()[0]
+			# offsets = (0.0, 1.5, 1.5)
+			offsets = (front_cam['y'], -front_cam['x'], -front_cam['z'])
+			intrinsic_matrix = estimate_intrinsics(
+				fov_x=front_cam['fov'], fov_y=60, height=front_cam['height'], width=front_cam['width'],
+			)
+			# 4x4 matrix
+			extrinsic_matrix = np.array(
+				[
+					[1, 0, 0, offsets[0]],
+					[0, 1, 0, offsets[1]],
+					[0, 0, 1, offsets[2]],
+					[0, 0, 0, 1],
+				]
+			)
+
+			plot_trajectories(
+				frame_img=rgb_image,
+				trajectories=[pred_wp],
+				intrinsic_matrix=intrinsic_matrix,
+				extrinsic_matrix=extrinsic_matrix,
+				line=True,
+				track=True,
+				interpolation_samples=10,
+			)
+
 			vis_image = np.hstack((rgb_image, bev_image))
 			# vis_image = cv2.cvtColor(vis_image, cv2.COLOR_RGB2BGR)
 			

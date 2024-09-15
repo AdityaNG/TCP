@@ -1,5 +1,11 @@
-# TCP - Trajectory-guided Control Prediction for End-to-end Autonomous Driving: A Simple yet Strong Baseline
+# Reproducing Results: TCP - Trajectory-guided Control Prediction for End-to-end Autonomous Driving: A Simple yet Strong Baseline
 
+I have reproduced the results of the TCP paper and have made the checkpoints public!
+This model was trained on an Lenovo Legion laptop with an Intel i7-12700H (20 threads) and NVIDIA GeForce RTX 3070 Mobile GPU with 8 GB VRAM.
+![demo](assets/demo.gif)
+![train_loss](assets/train_loss.png)
+
+# TCP
 ![teaser](assets/teaser_.png)
 
 > Trajectory-guided Control Prediction for End-to-end Autonomous Driving: A Simple yet Strong Baseline  
@@ -47,12 +53,28 @@ pip install carla==0.9.12
 
 Download our dataset through [Huggingface](https://huggingface.co/datasets/craigwu/tcp_carla_data) (combine the part with command `cat tcp_carla_data_part_* > tcp_carla_data.zip`) or [GoogleDrive](https://drive.google.com/file/d/1HZxlSZ_wUVWkNTWMXXcSQxtYdT7GogSm/view?usp=sharing) or [BaiduYun](https://pan.baidu.com/s/11xBZwAWQ3WxQXecuuPoexQ) (提取码 8174). The total size of our dataset is around 115G, make sure you have enough space.
 
+## Pretrained Checkpoint
+
+You can download the checkpoints from this [Google Drive Link](https://drive.google.com/drive/u/0/folders/1w380rIOiW-EKY2DtbzkEedqVW5NIsPK6) and place them at `ckpts/`.
+
+```
+(TCP)$ tree ckpts/
+ckpts/
+├── epoch_07.pth
+├── epoch_11.pth
+├── epoch_12.pth
+├── epoch_16.pth
+└── epoch_20.pth
+
+0 directories, 5 files
+```
+
 ## Training
-First, set the dataset path in ``TCP/config.py``.
+First, set the dataset path in ``TCP/config.py`` in `root_dir_all`.
 Training:
 ```
 python -m TCP.train
-python -m TCP.train --resume_from_checkpoint ckpts/epoch_07.pth
+python -m TCP.train --resume_from_checkpoint ckpts/epoch_20.pth
 ```
 
 ## Data Generation

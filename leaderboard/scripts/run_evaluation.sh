@@ -21,7 +21,7 @@ export VISUALIZE_IMAGE=1
 # TCP evaluation
 export ROUTES=leaderboard/data/evaluation_routes/routes_lav_valid.xml
 export TEAM_AGENT=team_code/tcp_agent.py
-export TEAM_CONFIG="log/TCP/best_epoch=05-val_loss=0.795.ckpt"
+export TEAM_CONFIG="ckpts/epoch_20.pth"
 export CHECKPOINT_ENDPOINT=results_TCP.json
 export SCENARIOS=leaderboard/data/scenarios/all_towns_traffic_scenarios.json
 export SAVE_PATH=data/results_TCP/
