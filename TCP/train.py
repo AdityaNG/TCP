@@ -160,6 +160,7 @@ if __name__ == "__main__":
 	parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
 	parser.add_argument('--logdir', type=str, default='log', help='Directory to log data to.')
 	parser.add_argument('--gpus', type=int, default=1, help='number of gpus')
+	parser.add_argument('--resume_from_checkpoint', type=str, default=None, help='Path to a checkpoint to resume training from.')
 
 	args = parser.parse_args()
 	args.logdir = os.path.join(args.logdir, args.id)
@@ -181,21 +182,23 @@ if __name__ == "__main__":
 	checkpoint_callback = ModelCheckpoint(save_weights_only=False, mode="min", monitor="val_loss", save_top_k=2, save_last=True,
 											dirpath=args.logdir, filename="best_{epoch:02d}-{val_loss:.3f}")
 	checkpoint_callback.CHECKPOINT_NAME_LAST = "{epoch}-last"
-	trainer = pl.Trainer.from_argparse_args(args,
-											default_root_dir=args.logdir,
-											gpus = args.gpus,
-											accelerator='ddp',
-											sync_batchnorm=True,
-											plugins=DDPPlugin(find_unused_parameters=False),
-											profiler='simple',
-											benchmark=True,
-											log_every_n_steps=1,
-											flush_logs_every_n_steps=5,
-											callbacks=[checkpoint_callback,
-														],
-											check_val_every_n_epoch = args.val_every,
-											max_epochs = args.epochs
-											)
+	trainer = pl.Trainer.from_argparse_args(
+		args,
+		default_root_dir=args.logdir,
+		gpus = args.gpus,
+		accelerator='ddp',
+		sync_batchnorm=True,
+		plugins=DDPPlugin(find_unused_parameters=False),
+		profiler='simple',
+		benchmark=True,
+		log_every_n_steps=1,
+		flush_logs_every_n_steps=5,
+		callbacks=[checkpoint_callback,
+					],
+		check_val_every_n_epoch = args.val_every,
+		max_epochs = args.epochs,
+		resume_from_checkpoint=args.resume_from_checkpoint
+	)
 
 	trainer.fit(TCP_model, dataloader_train, dataloader_val)
 
