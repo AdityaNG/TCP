@@ -14,7 +14,7 @@ export PORT=2000
 export TM_PORT=8000
 export DEBUG_CHALLENGE=0
 export REPETITIONS=3 # multiple evaluation runs
-export RESUME=False
+export RESUME=True
 export VISUALIZE_IMAGE=1
 
 

@@ -1,9 +1,18 @@
 # Reproducing Results: TCP - Trajectory-guided Control Prediction for End-to-end Autonomous Driving: A Simple yet Strong Baseline
 
 I have reproduced the results of the TCP paper and have made the checkpoints public!
-This model was trained on an Lenovo Legion laptop with an Intel i7-12700H (20 threads) and NVIDIA GeForce RTX 3070 Mobile GPU with 8 GB VRAM.
-![demo](assets/demo.gif)
+This model was trained on an Lenovo Legion laptop with an Intel i7-12700H (20 threads) and NVIDIA GeForce RTX 3070 Mobile GPU with 8 GB VRAM. The model was trained upto epoch 20.
+
+![demo](assets/demo_turns.gif)
 ![train_loss](assets/train_loss.png)
+
+
+```
+Average Score Composed: 40.24
+Average Score Penalty: 0.67
+Average Score Route: 65.82
+```
+
 
 # TCP
 ![teaser](assets/teaser_.png)
